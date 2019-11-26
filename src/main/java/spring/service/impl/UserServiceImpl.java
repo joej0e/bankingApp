@@ -1,9 +1,12 @@
 package spring.service.impl;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import spring.dto.RegistrationRequestDto;
 import spring.entity.User;
 import spring.exception.LoginAlreadyExistsException;
@@ -16,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private static AtomicInteger REGISTER_COUNTER = new AtomicInteger(0);
@@ -38,6 +42,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
         user.setLogin(newUser.getLogin());
+        user.setAccounts(Collections.emptyList());
         if (REGISTER_COUNTER.get() == 0) {
             user.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_ADMIN")));
             REGISTER_COUNTER.set(1);

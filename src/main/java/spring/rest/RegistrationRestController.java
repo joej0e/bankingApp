@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +13,8 @@ import spring.exception.LoginAlreadyExistsException;
 import spring.service.UserService;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class RegistrationRestController {
@@ -24,10 +27,13 @@ public class RegistrationRestController {
     }
 
     @PostMapping("registration")
-    public ResponseEntity<String> register(@RequestBody @Valid RegistrationRequestDto registrationRequestDto, BindingResult bindingResult) {
+    public ResponseEntity register(@RequestBody @Valid RegistrationRequestDto registrationRequestDto, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
-            return new ResponseEntity<>("Password must contain at least one special character, " +
-                    "one digit and one uppercase character and it must be in between 8 and 30 characters!", HttpStatus.BAD_REQUEST);
+            List<? super FieldError> fieldErrors = bindingResult.getAllErrors()
+                    .stream()
+                    .filter(e -> e instanceof FieldError)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(fieldErrors, HttpStatus.BAD_REQUEST);
         }
         try {
             userService.register(registrationRequestDto);

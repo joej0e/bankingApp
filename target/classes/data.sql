@@ -13,10 +13,10 @@ INSERT INTO user_role (user_id, role_id) VALUES
 INSERT INTO account (id, balance, user_id) VALUES
   (1, 1000., 1),
   (2, 3000., 1),
-  (3, 2000., 2);
+  (3, 5000., 1);
 
 INSERT INTO operation (id, account_id, sum, balance) VALUES
-  (1, 1, 200., 100.),
-  (2, 1, 100., 15.),
-  (3, 1, 90., 43.),
-  (4, 1, 10., 145.);
+  (1, 1, -200., 800.),
+  (2, 1, 300., 1100.),
+  (3, 1, -90., 1010.),
+  (4, 1, 150., 1160.);

@@ -1,6 +1,5 @@
 package spring.service.impl;
 
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spring.entity.Account;
@@ -63,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
         account.setBalance(newBalance);
         Account result = accountRepository.save(account);
         Date date = new Date();
-        Operation operation = new Operation(account, -amount, newBalance, date);
+        Operation operation = new Operation(account, amount, newBalance, date);
         operationService.save(operation);
         return result;
     }
