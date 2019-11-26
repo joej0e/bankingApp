@@ -12,7 +12,6 @@ import spring.security.jwt.JwtUserFactory;
 import spring.service.UserService;
 
 @Service("JwtUserDetailsService")
-@Slf4j
 public class JwtUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
@@ -29,9 +28,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(login);
         }
-        JwtUser jwtUser = JwtUserFactory.create(user);
-        log.info("IN loadUserByUsername - user: {} successfully loaded", jwtUser);
-        return jwtUser;
+        return JwtUserFactory.create(user);
     }
 
 }

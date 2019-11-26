@@ -1,7 +1,5 @@
 package spring.service.impl;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,7 +16,6 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
-@Slf4j
 @Transactional
 public class UserServiceImpl implements UserService {
 
@@ -51,14 +48,12 @@ public class UserServiceImpl implements UserService {
             REGISTER_COUNTER.getAndIncrement();
         }
         User registeredUser = userRepository.save(user);
-        log.info("IN register - user: {} successfully registered ", registeredUser);
         return registeredUser;
     }
 
     @Override
     public User findByLogin(String login) {
         User result = userRepository.findByLogin(login);
-        log.info("IN findByLogin - user: {} successfully registered ", result);
         return result;
     }
 
