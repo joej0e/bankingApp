@@ -17,7 +17,6 @@ import java.util.Date;
 
 @Entity
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Operation implements Serializable {
 
     @Id

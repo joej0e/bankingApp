@@ -3,6 +3,7 @@ package spring.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.Entity;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @Entity
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 public class Role implements Serializable {
 
     @Id
@@ -29,4 +30,8 @@ public class Role implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
     @JsonIgnore
     private List<User> users;
+
+    public Role(String name) {
+        this.name = name;
+    }
 }

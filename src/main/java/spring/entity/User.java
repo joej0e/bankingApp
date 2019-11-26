@@ -23,7 +23,6 @@ import java.util.Set;
 
 @Entity
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {
 
     @Id
