@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import spring.dto.RegistrationRequestDto;
+import spring.entity.User;
 import spring.exception.LoginAlreadyExistsException;
 import spring.service.UserService;
 
@@ -35,12 +36,16 @@ public class RegistrationRestController {
                     .collect(Collectors.toList());
             return new ResponseEntity<>(fieldErrors, HttpStatus.BAD_REQUEST);
         }
+        User result;
         try {
-            userService.register(registrationRequestDto);
+            result = userService.register(registrationRequestDto);
         } catch (LoginAlreadyExistsException e) {
             return new ResponseEntity<>("Login " + registrationRequestDto.getLogin()
                     + " already exists!", HttpStatus.CONFLICT);
         }
-        return ResponseEntity.ok("You have successfully registered");
+        return new ResponseEntity<>(result.getRoles().stream()
+                .findFirst()
+                .get()
+                .getName() + ", you have successfully registered", HttpStatus.CREATED);
     }
 }

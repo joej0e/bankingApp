@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,7 +53,7 @@ public class AccountRestController {
         return userService.findByLogin(jwtUser.getUsername());
     }
 
-    @GetMapping("")
+    @GetMapping("/")
     public ResponseEntity<List<Account>> getAccounts() {
         User loggedInUser = getLoggedInUser();
         List<Account> result = accountService.findAllByUserId(loggedInUser.getId());
@@ -69,10 +69,10 @@ public class AccountRestController {
         account.setUser(loggedInUser);
         account.setOperations(Collections.emptyList());
         Account result = accountService.createAccount(account);
-        return ResponseEntity.ok(result);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "{account_id}/deposit")
+    @PatchMapping(value = "{account_id}/deposit")
     public ResponseEntity deposit(@RequestBody Double amount, @PathVariable Long account_id) {
         User loggedInUser = getLoggedInUser();
         Account account = loggedInUser.getAccounts().stream()
@@ -86,7 +86,7 @@ public class AccountRestController {
         return new ResponseEntity<>(INCORRECT_ACCOUNT_ID, HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping(value = "{account_id}/withdraw")
+    @PatchMapping(value = "{account_id}/withdraw")
     public ResponseEntity withdraw(@RequestBody Double amount, @PathVariable Long account_id) {
         User loggedInUser = getLoggedInUser();
         Account account = loggedInUser.getAccounts().stream()

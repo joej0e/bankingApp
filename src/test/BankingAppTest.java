@@ -1,5 +1,4 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,14 +21,14 @@ import java.util.Collections;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SpringBootApp.class)
 @Slf4j
-public class RegisterUseCaseIntegrationTest {
+public class BankingAppTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -41,13 +40,19 @@ public class RegisterUseCaseIntegrationTest {
     }
 
     @Test
-    public void testRegistrationValidRequestBody() throws Exception {
+    public void testRegistrationValidRequestBodyAndGetRoles() throws Exception {
         MvcResult result  = mockMvc.perform(post("/registration")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(new RegistrationRequestDto("userNew", "Password1?"))))
-                .andExpect(status().isOk())
+                .content(asJsonString(new RegistrationRequestDto("adminNew", "Password1?"))))
+                .andExpect(status().isCreated())
                 .andReturn();
-        log.info(result.getResponse().getContentAsString());
+        log.info("After admin creation \n" + result.getResponse().getContentAsString());
+        result = mockMvc.perform(post("/registration")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(new RegistrationRequestDto("userNew", "Password1?"))))
+                .andExpect(status().isCreated())
+                .andReturn();
+        log.info("After user creation \n" + result.getResponse().getContentAsString());
     }
 
     @Test
@@ -68,11 +73,11 @@ public class RegisterUseCaseIntegrationTest {
         MvcResult result = mockMvc.perform(post("/user/accounts/create_account")
                 .header("Authorization", generatedToken)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
         log.info("After account creation \n" + result.getResponse().getContentAsString());
 
-        result = mockMvc.perform(put("/user/accounts/1/deposit")
+        result = mockMvc.perform(patch("/user/accounts/1/deposit")
                 .content(asJsonString(500))
                 .header("Authorization", generatedToken)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -80,7 +85,7 @@ public class RegisterUseCaseIntegrationTest {
                 .andReturn();
         log.info("After deposit \n" + result.getResponse().getContentAsString());
 
-        result = mockMvc.perform(put("/user/accounts/1/withdraw")
+        result = mockMvc.perform(patch("/user/accounts/1/withdraw")
                 .content(asJsonString(300))
                 .header("Authorization", generatedToken)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -93,6 +98,12 @@ public class RegisterUseCaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         log.info("After statement \n" + result.getResponse().getContentAsString());
+
+        result = mockMvc.perform(get("/user/accounts/")
+                .header("Authorization", generatedToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        log.info("After get accounts \n" + result.getResponse().getContentAsString());
     }
 
     public String asJsonString(final Object obj) {
